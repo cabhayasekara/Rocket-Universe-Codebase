@@ -1,4 +1,163 @@
-      PROGRAM DELNT.C
+ PROGRAM TH.BM.ENQ.DETAILS.DRV
+      PROGRAM.NAME = "TH.BM.ENQ.DETAILS.DRV"
+*********************************************************************
+* Description
+* Driver program for TH.BM.ENQ.DETAILS to allow it to be run from a menu
+*
+*********************************************************************
+*
+* Author       : Tim Adlem
+* Date Written : 17/12/10
+*
+*  Job #     Date   Inits Comments
+* ======== ======== ===== ========
+* 14430r3  04/01/11 tadle Original Version
+* 15717r46 21/11/22 arida Replaced hard coded customer validation with dynamic
+*********************************************************************
+
+      INCLUDE DG-INCLUDES TCSTANDARD
+      INCLUDE INCLUDES MN.TERMWORK.COMMON
+      INCLUDE INCLUDES MASKS.COMMON
+
+***********
+* EQUATES *
+***********
+
+      EQU TRUE TO 1
+      EQU FALSE TO 0
+      EQU NULL TO ""
+      EQU DLIM TO '*'
+      EQU EOL TO CLEOL
+      EQU EOS TO CLEOS
+
+************
+* INCLUDES *
+************
+
+      INCLUDE INCLUDES EQU.TERMWORK
+      INCLUDE INCLUDES EQU.POS.CUSTOMER
+
+**************
+* FILE OPENS *
+**************
+
+      ACCOUNT.NAME = OCONV(@WHO,'MCU')
+      ERR = ''
+      INCLUDE INCLUDES OPEN.FILE.TERMWORK
+      INCLUDE INCLUDES OPEN.FILE.SY.PARAMS
+      INCLUDE INCLUDES OPEN.FILE.SCREENS
+      INCLUDE INCLUDES OPEN.FILE.BRN.DETAIL
+      INCLUDE INCLUDES OPEN.FILE.POS.CUSTOMER
+      INCLUDE INCLUDES OPEN.FILE.HO.CUSTOMER
+      INCLUDE INCLUDES OPEN.FILE.CASH.HO.CUSTOMER
+      INCLUDE INCLUDES OPEN.FILE.TH.PARAMS
+
+      IF ERR NE '' THEN
+         FATAL.ERROR.MSG = "CANNOT OPEN FILES ":ERR
+         GOSUB FATAL.ERROR
+      END
+
+      GOSUB MAIN.PROG
+
+*********
+PROG.END:
+*********
+
+      STOP
+
+**********
+MAIN.PROG:
+**********
+
+      CRT CURSOR.OFF:
+
+      READ EXCLUDED.CUSTOMERS FROM TH.PARAMS.FV,'EXCLUDED.CUSTOMERS' ELSE
+         EXCLUDED.CUSTOMERS = ""
+      END
+
+      FINISHED = FALSE
+      LOOP
+         GOSUB GET.INPUT
+      UNTIL FINISHED
+         COMPLETED = FALSE
+         CALL TH.BM.ENQ.DETAILS(CUST.NO,CUST.ADDR,DEL.ADDR,COMPLETED,FULFILMENT.BRN,CONTACT.DETAILS,'','','','')
+         IF COMPLETED THEN
+            CALL BS.OE.DSPLY.BOX(4,15,72,5,'Y','','')
+            READV ENQ.BRN.DESC FROM BRN.DETAIL.FV,FULFILMENT.BRN,5 ELSE ENQ.BRN.DESC = ""
+            ENQ.MESSAGE = 'Remote Toolhire Enquiry created at ':FULFILMENT.BRN'L#4':" ":ENQ.BRN.DESC'L#28'
+            CALL TPCRT(6,17,ENQ.MESSAGE,'','','','','','')
+            CALL ERR("Press <RTN> to continue...","")
+         END
+      REPEAT
+
+      CRT CURSOR.ON:
+
+      RETURN
+
+***************
+DISPLAY.SCREEN:
+***************
+
+      CRT @(-1)
+      EXT.TODAY = OCONV(DATE(),'D4/')
+      PAGE.WIDTH = 78
+      INCLUDE INCLUDES BUILD.TOP.RIGHT
+      SCREEN.TITLE = "BM Toolhire Enquiry"
+      SCREEN.TITLE = TRIM(SCREEN.TITLE'L#60')
+      POS = INT((PAGE.WIDTH - LEN(SCREEN.TITLE))/2) - LEN(EXT.TODAY)
+      CRT.VAR = @(0,0):TCUL:EXT.TODAY:SPACE(POS):SCREEN.TITLE:TOP.RIGHT:NORMAL ; CRT CRT.VAR
+      CRT @(0,21):TCUL:SPACE(PAGE.WIDTH):NORMAL:
+
+      CALL TPCRT(10,3,TCDIM:"Customer  :":NORMAL,'','','','','','')
+      CALL TPCRT(2,7,TCDIM:"Enter any of the following or hit return to continue without selecting a":NORMAL,'','','','','','')
+      CALL TPCRT(2,8,TCDIM:"customer.":NORMAL,'','','','','','')
+      CALL TPCRT(4,10,TCDIM:"Credit account number":NORMAL,'','','','','','')
+      CALL TPCRT(4,11,TCDIM:"Customer name":NORMAL,'','','','','','')
+      CALL TPCRT(4,12,TCDIM:"<Return> for 'Cash' customer":NORMAL,'','','','','','')
+
+      RETURN
+
+**********
+GET.INPUT:
+**********
+
+      INPUT.COMPLETE = FALSE
+
+      HELP = "Search for a customer or leave blank for a cash customer"
+      CUST.VAR = ""
+
+      LOOP UNTIL INPUT.COMPLETE DO
+         GOSUB DISPLAY.SCREEN
+         CTL = ''
+         CRT CURSOR.ON:
+         CALL INP(27,3,CUST.VAR,40,'L#40','MCU','',0,0,0,CTL,HELP,0)
+         CRT CURSOR.OFF:
+
+         BEGIN CASE
+            CASE CTL = "/"
+               INPUT.COMPLETE = TRUE
+               FINISHED = TRUE
+            CASE CTL NE NULL
+               CALL ERR('YOU CANNOT "':CTL:'" HERE','')
+            CASE TRIM(CUST.VAR) = ""
+               INPUT.COMPLETE = TRUE
+               GOSUB NULL.VARS
+            CASE CUST.VAR MATCHES VALID.ACCOUNT.MASK
+               READV CHECK.CUSTOMER FROM POS.CUSTOMER.FV, CUST.VAR, 1 THEN
+                  INPUT.COMPLETE = TRUE
+                  GOSUB NULL.VARS
+                  CUST.NO = CUST.VAR
+               END ELSE
+                  CALL ERR('CUSTOMER "':CUST.VAR:'" WAS NOT FOUND','')
+               END
+            CASE 1
+               GOSUB CUSTOMER.RETRIEVAL
+         END CASE
+      REPEAT
+
+      RETURN
+*******************************************************************************
+PROGRAM DELNT.C
       PROGRAM.NAME = "DELNT.C"
 
 *********************************************************************
