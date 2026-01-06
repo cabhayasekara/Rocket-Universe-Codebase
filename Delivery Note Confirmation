@@ -6,36 +6,6 @@
 *
 *********************************************************************
 *
-* Author       : Tim Adlem
-* Date Written : 17/12/10
-*
-*  Job #     Date   Inits Comments
-* ======== ======== ===== ========
-* 14430r3  04/01/11 tadle Original Version
-* 15717r46 21/11/22 arida Replaced hard coded customer validation with dynamic
-*********************************************************************
-
-      INCLUDE DG-INCLUDES TCSTANDARD
-      INCLUDE INCLUDES MN.TERMWORK.COMMON
-      INCLUDE INCLUDES MASKS.COMMON
-
-***********
-* EQUATES *
-***********
-
-      EQU TRUE TO 1
-      EQU FALSE TO 0
-      EQU NULL TO ""
-      EQU DLIM TO '*'
-      EQU EOL TO CLEOL
-      EQU EOS TO CLEOS
-
-************
-* INCLUDES *
-************
-
-      INCLUDE INCLUDES EQU.TERMWORK
-      INCLUDE INCLUDES EQU.POS.CUSTOMER
 
 **************
 * FILE OPENS *
