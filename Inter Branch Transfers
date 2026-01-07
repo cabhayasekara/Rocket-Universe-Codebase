@@ -89,11 +89,7 @@
 ********************************************************************
 *  DEFINE CONSTANTS AND EQUATES
 *******************
-$OPTIONS REALITY
-$OPTIONS HEADER.DATE
-
-      INCLUDE DG-INCLUDES TCSTANDARD
-      INCLUDE DG-INCLUDES DEFFUN.INCLUDES
+  INCLUDE DG-INCLUDES DEFFUN.INCLUDES
 * 14793r13 RKARU - Start
       INCLUDE INCLUDES APP.DEFFUN.INCLUDES
 * 14793r13 RKARU - End
@@ -751,3 +747,4 @@ FATAL.ERROR:
       RETURN
 **************************************************************************
       END
+
