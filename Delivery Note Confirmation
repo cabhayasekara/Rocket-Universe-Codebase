@@ -56,7 +56,7 @@
 *******************************************
 *
 
-      INCLUDE DG-INCLUDES TCSTANDARD
+*      INCLUDE DG-INCLUDES TCSTANDARD
 
 * $OPTIONS REALITY
 * $OPTIONS HEADER.DATE
@@ -65,7 +65,7 @@
   *    INCLUDE DG-INCLUDES DEFFUN.INCLUDES
 
 *************
-BEFORE.START:
+* BEFORE.START:
 *************
 
   *    EQU CLEAR TO FF
@@ -96,7 +96,3 @@ BEFORE.START:
 *      INCLUDE INCLUDES EQU.DELIV.MAN.JOB.RESULT.DIM
 
 
-
-      RETURN
-
-   END
