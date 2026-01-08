@@ -3,7 +3,14 @@
 
 *********************************************************************
 * PROGRAM........DELIVERY NOTE CONFIRMATION
-
+* 6684 open of sy.params added
+*     INCLUDE INCLUDES OPEN.FILE.SY.PARAMS
+      IF ERR # "" THEN
+         FATAL.ERROR.MSG = 'CANNOT OPEN FILES ':ERR
+         TRANS.ACTION='A'
+         DG.TRANS.FLAG=''
+         GOSUB DG.TRANS.BOUND
+         GOSUB FATAL.ERROR
 * DESCRIPTION.
 * This module allows the confirmation of orders for the Account Sale.
 * The confirmation is the final stage of an Account Sale before the
