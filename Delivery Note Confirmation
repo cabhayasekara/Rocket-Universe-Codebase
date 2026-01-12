@@ -173,6 +173,13 @@ GET.INPUT:
          END CASE
       REPEAT
 
+ IF TRM.AUTH.ID THEN
+         COST.LEVEL = 0
+         CALL BS.COST.ACCESS(TRM.AUTH.ID,COST.LEVEL,'','','','','','')
+      END ELSE
+         COST.LEVEL = 1
+      END
+
       RETURN
 *******************************************************************************
 PROGRAM DELNT.C
