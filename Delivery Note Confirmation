@@ -130,10 +130,10 @@ DISPLAY.SCREEN:
 
       RETURN
 
-function printDeliveryNoteStatus(deliveryNote) {
-    status = deliveryNote.status
-    print("Current delivery note status: " + status)
-}
+* function printDeliveryNoteStatus(deliveryNote) {
+ *   status = deliveryNote.status
+ *   print("Current delivery note status: " + status)
+*}
 
 **********
 GET.INPUT:
